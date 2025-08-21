@@ -6,11 +6,11 @@
 /*   By: vgotzlov <vgotzlov@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 13:21:14 by vgotzlov          #+#    #+#             */
-/*   Updated: 2025/08/14 14:21:12 by vgotzlov         ###   ########.fr       */
+/*   Updated: 2025/08/21 19:36:04 by vgotzlov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "get_next_line.h"
+#include "get_next_line.h"
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {

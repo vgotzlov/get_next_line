@@ -6,7 +6,7 @@
 /*   By: vgotzlov <vgotzlov@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 13:20:52 by vgotzlov          #+#    #+#             */
-/*   Updated: 2025/08/27 15:52:55 by vgotzlov         ###   ########.fr       */
+/*   Updated: 2025/08/27 18:50:11 by vgotzlov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,11 @@ static char	*save_rest(char *stash)
 	while (stash[i] && stash[i] != '\n')
 		i++;
 	if (!stash[i])
-	{
-		free(stash);
-		return (NULL);
-	}
+		return (free(stash), NULL);
 	i++;
 	rest = malloc(ft_strlen(stash + i) + 1);
 	if (!rest)
-		return (NULL);
+		return (free(stash), NULL);
 	j = 0;
 	while (stash[i])
 		rest[j++] = stash[i++];
@@ -82,15 +79,13 @@ char	*get_next_line(int fd)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read < 0)
-			return (free(buf), NULL);
-		if (bytes_read == 0)
-			break ;
+			return (free(buf), free(stash), stash = NULL, NULL);
 		buf[bytes_read] = '\0';
 		stash = free_join(stash, buf);
 	}
 	free(buf);
 	if (!stash)
-		return (NULL);
+		return ((free(buf), NULL));
 	line = get_line(stash);
 	stash = save_rest(stash);
 	return (line);
@@ -105,7 +100,7 @@ char	*free_join(char *s1, const char *s2)
 	return (temp);
 }
 
-int	main(void)
+/* int	main(void)
 {
 	int		fd = open("example.txt", O_RDONLY);
 	char	*line;
@@ -120,3 +115,4 @@ int	main(void)
 	close(fd);
 	return (0);
 }
+ */

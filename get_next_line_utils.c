@@ -6,7 +6,7 @@
 /*   By: vgotzlov <vgotzlov@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 13:21:14 by vgotzlov          #+#    #+#             */
-/*   Updated: 2025/08/21 19:36:04 by vgotzlov         ###   ########.fr       */
+/*   Updated: 2025/08/27 15:53:03 by vgotzlov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,87 @@
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
-	void	*ptr;
-	size_t	total;
+	unsigned char	*ptr;
+	size_t			total;
+	size_t			i;
 
 	total = nmemb * size;
 	ptr = malloc(total);
 	if (!ptr)
 		return (NULL);
-	ft_memset(ptr, '\0', total);
-	return (ptr);
-}
-
-void	*ft_memset(void *s, int c, size_t n)
-{
-	unsigned char	*ptr;
-	size_t			i;
-
-	ptr = (unsigned char *)s;
 	i = 0;
-	while (i < n)
+	while (i < total)
 	{
-		ptr[i] = (unsigned char)c;
+		ptr[i] = 0;
 		i++;
 	}
-	return (s);
+	return ((void *)ptr);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	if (!s)
+		return (NULL);
+	while (*s)
+	{
+		if (*s == (char)c)
+			return ((char *)s);
+		s++;
+	}
+	if ((char)c == '\0')
+		return ((char *)s);
+	return (NULL);
+}
+
+char	*ft_strjoin(const char *s1, const char *s2)
+{
+	size_t	len;
+	char	*str;
+	char	*ptr;
+
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	len = ft_strlen(s1) + ft_strlen(s2);
+	str = malloc(len + 1);
+	if (!str)
+		return (NULL);
+	ptr = str;
+	while (*s1)
+		*ptr++ = *s1++;
+	while (*s2)
+		*ptr++ = *s2++;
+	*ptr = '\0';
+	return (str);
+}
+
+char	*ft_strdup(const char *s)
+{
+	size_t	len;
+	char	*dup;
+	int		i;
+
+	i = 0;
+	len = ft_strlen(s) + 1;
+	dup = (char *)malloc(sizeof(char) * (len));
+	if (!dup)
+		return ((char *) NULL);
+	while (s[i])
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
 }

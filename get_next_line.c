@@ -6,7 +6,7 @@
 /*   By: vgotzlov <vgotzlov@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 13:20:52 by vgotzlov          #+#    #+#             */
-/*   Updated: 2025/08/21 19:36:20 by vgotzlov         ###   ########.fr       */
+/*   Updated: 2025/08/27 15:52:55 by vgotzlov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,48 +14,108 @@
 
 #include <stdio.h>
 
+static char	*get_line(char *stash)
+{
+	size_t	i;
+	char	*line;
+
+	if (!stash || !stash[0])
+		return (NULL);
+	i = 0;
+	while (stash[i] && stash[i] != '\n')
+		i++;
+	line = malloc(i + (stash[i] == '\n') + 1);
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (stash[i] && stash[i] != '\n')
+	{
+		line[i] = stash[i];
+		i++;
+	}
+	if (stash[i] == '\n')
+		line[i++] = '\n';
+	line[i] = '\0';
+	return (line);
+}
+
+static char	*save_rest(char *stash)
+{
+	size_t	i;
+	size_t	j;
+	char	*rest;
+
+	i = 0;
+	while (stash[i] && stash[i] != '\n')
+		i++;
+	if (!stash[i])
+	{
+		free(stash);
+		return (NULL);
+	}
+	i++;
+	rest = malloc(ft_strlen(stash + i) + 1);
+	if (!rest)
+		return (NULL);
+	j = 0;
+	while (stash[i])
+		rest[j++] = stash[i++];
+	rest[j] = '\0';
+	free(stash);
+	return (rest);
+}
+
 char	*get_next_line(int fd)
 {
 	int			bytes_read;
-	char		*small_buffer;
-	static int	count;
+	char		*buf;
+	char		*line;
+	static char	*stash;
 
-	count = 1;
-	printf("ft_calloc#[%d]---", count++);
-	small_buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (small_buffer == NULL)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	bytes_read = read(fd, small_buffer, BUFFER_SIZE);
-	if (bytes_read <= 0)
+	buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (buf == NULL)
+		return (NULL);
+	bytes_read = 1;
+	while (bytes_read > 0 && !ft_strchr(stash, '\n'))
 	{
-		free (small_buffer);
-		return (NULL);
+		bytes_read = read(fd, buf, BUFFER_SIZE);
+		if (bytes_read < 0)
+			return (free(buf), NULL);
+		if (bytes_read == 0)
+			break ;
+		buf[bytes_read] = '\0';
+		stash = free_join(stash, buf);
 	}
-	return (small_buffer);
+	free(buf);
+	if (!stash)
+		return (NULL);
+	line = get_line(stash);
+	stash = save_rest(stash);
+	return (line);
+}
+
+char	*free_join(char *s1, const char *s2)
+{
+	char	*temp;
+
+	temp = ft_strjoin(s1, s2);
+	free(s1);
+	return (temp);
 }
 
 int	main(void)
 {
-	int		fd;
-	char	*next_line;
-	int		count;
+	int		fd = open("example.txt", O_RDONLY);
+	char	*line;
 
-	count = 0;
-	fd = open("example.txt", O_RDONLY);
-	if (fd == -1)
+	while ((line = get_next_line(fd)) != NULL)
 	{
-		printf("Error opening file");
-		return (1);
-	}
-	while (1)
-	{
-		next_line = get_next_line(fd);
-		if (next_line == NULL)
-			break ;
-		count++;
-		printf("[%d]:%s\n", count, next_line);
-		free(next_line);
-		next_line = NULL;
+		printf("---------------\n");
+		printf("%s", line);
+		printf("---------------\n");
+		free(line);
 	}
 	close(fd);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: vgotzlov <vgotzlov@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 13:20:52 by vgotzlov          #+#    #+#             */
-/*   Updated: 2025/08/27 18:50:11 by vgotzlov         ###   ########.fr       */
+/*   Updated: 2025/08/29 13:41:18 by vgotzlov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ char	*get_next_line(int fd)
 		stash = free_join(stash, buf);
 	}
 	free(buf);
-	if (!stash)
-		return ((free(buf), NULL));
+	if (!stash || stash[0] == '\0')
+		return ((free(stash), stash = NULL, NULL));
 	line = get_line(stash);
 	stash = save_rest(stash);
 	return (line);
@@ -95,6 +95,8 @@ char	*free_join(char *s1, const char *s2)
 {
 	char	*temp;
 
+	if (!s1 && !s2)
+		return (NULL);
 	temp = ft_strjoin(s1, s2);
 	free(s1);
 	return (temp);

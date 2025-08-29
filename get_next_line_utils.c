@@ -6,7 +6,7 @@
 /*   By: vgotzlov <vgotzlov@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 13:21:14 by vgotzlov          #+#    #+#             */
-/*   Updated: 2025/08/27 18:50:20 by vgotzlov         ###   ########.fr       */
+/*   Updated: 2025/08/29 13:41:25 by vgotzlov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	size_t			i;
 
 	total = nmemb * size;
+	if (size && total / size != nmemb)
+		return (NULL);
 	ptr = malloc(total);
 	if (!ptr)
 		return (NULL);
@@ -62,6 +64,8 @@ char	*ft_strjoin(const char *s1, const char *s2)
 	char	*str;
 	char	*ptr;
 
+	if (!s1 && !s2)
+		return (NULL);
 	if (!s1)
 		return (ft_strdup(s2));
 	if (!s2)
@@ -83,13 +87,15 @@ char	*ft_strdup(const char *s)
 {
 	size_t	len;
 	char	*dup;
-	int		i;
+	size_t	i;
 
+	if (!s)
+		return (NULL);
 	i = 0;
 	len = ft_strlen(s) + 1;
 	dup = (char *)malloc(sizeof(char) * (len));
 	if (!dup)
-		return ((char *) NULL);
+		return (NULL);
 	while (s[i])
 	{
 		dup[i] = s[i];

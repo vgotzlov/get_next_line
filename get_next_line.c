@@ -6,7 +6,7 @@
 /*   By: vgotzlov <vgotzlov@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 13:20:52 by vgotzlov          #+#    #+#             */
-/*   Updated: 2025/08/29 13:41:18 by vgotzlov         ###   ########.fr       */
+/*   Updated: 2025/08/29 15:21:54 by vgotzlov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ static char	*save_rest(char *stash)
 	if (!stash[i])
 		return (free(stash), NULL);
 	i++;
+	if (!stash[i])
+		return (free(stash), NULL);
 	rest = malloc(ft_strlen(stash + i) + 1);
 	if (!rest)
 		return (free(stash), NULL);
@@ -73,13 +75,22 @@ char	*get_next_line(int fd)
 		return (NULL);
 	buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (buf == NULL)
+	{
+		if (stash)
+		{
+			free(stash);
+			stash = NULL;
+		}
 		return (NULL);
+	}
 	bytes_read = 1;
 	while (bytes_read > 0 && !ft_strchr(stash, '\n'))
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read < 0)
 			return (free(buf), free(stash), stash = NULL, NULL);
+		if (bytes_read == 0)
+			break ;
 		buf[bytes_read] = '\0';
 		stash = free_join(stash, buf);
 	}
@@ -87,6 +98,8 @@ char	*get_next_line(int fd)
 	if (!stash || stash[0] == '\0')
 		return ((free(stash), stash = NULL, NULL));
 	line = get_line(stash);
+	if (!line)
+		return (free(stash), stash = NULL, NULL);
 	stash = save_rest(stash);
 	return (line);
 }
@@ -99,6 +112,8 @@ char	*free_join(char *s1, const char *s2)
 		return (NULL);
 	temp = ft_strjoin(s1, s2);
 	free(s1);
+	if (temp && temp[0] == '\0')
+		return (free(temp), NULL);
 	return (temp);
 }
 
@@ -116,5 +131,4 @@ char	*free_join(char *s1, const char *s2)
 	}
 	close(fd);
 	return (0);
-}
- */
+} */
